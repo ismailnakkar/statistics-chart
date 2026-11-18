@@ -1,0 +1,275 @@
+:where(:root) {
+    --statistics-series-1: light-dark(#2563eb, #60a5fa);
+    --statistics-series-2: light-dark(#d97706, #fbbf24);
+    --statistics-series-3: light-dark(#059669, #34d399);
+    --statistics-series-4: light-dark(#7c3aed, #a78bfa);
+    --statistics-area-opacity: 0.2;
+    --statistics-line-width: 2.5;
+    --statistics-grid-color: light-dark(#e5e7eb, #374151);
+    --statistics-baseline-color: light-dark(#9ca3af, #6b7280);
+    --statistics-text-color: light-dark(#374151, #e5e7eb);
+    --statistics-minor-text-color: light-dark(#6b7280, #9ca3af);
+    --statistics-font-size: 0.75rem;
+    --statistics-tab-background: light-dark(#f3f4f6, #1f2937);
+    --statistics-tab-selected-background: light-dark(#dbeafe, #1e3a8a);
+    --statistics-tab-selected-color: currentColor;
+    --statistics-tip-background: light-dark(#fff, #111827);
+    --statistics-tip-border: 1px solid light-dark(#e5e7eb, #374151);
+    --statistics-tip-shadow: 0 4px 12px light-dark(rgb(0 0 0 / 0.12), rgb(0 0 0 / 0.5));
+    --statistics-radius: 0.375rem;
+    --statistics-focus-color: light-dark(#2563eb, #60a5fa);
+    --statistics-bar-color: light-dark(#2563eb, #60a5fa);
+    --statistics-bar-radius: 3px;
+}
+
+/* Before light-dark() (Chrome 123, Firefox 120, Safari 17.5), the light colours. */
+@supports not (color: light-dark(#000, #fff)) {
+    :where(:root) {
+        --statistics-series-1: #2563eb;
+        --statistics-series-2: #d97706;
+        --statistics-series-3: #059669;
+        --statistics-series-4: #7c3aed;
+        --statistics-grid-color: #e5e7eb;
+        --statistics-baseline-color: #9ca3af;
+        --statistics-text-color: #374151;
+        --statistics-minor-text-color: #6b7280;
+        --statistics-tab-background: #f3f4f6;
+        --statistics-tab-selected-background: #dbeafe;
+        --statistics-tip-background: #fff;
+        --statistics-tip-border: 1px solid #e5e7eb;
+        --statistics-tip-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
+        --statistics-focus-color: #2563eb;
+        --statistics-bar-color: #2563eb;
+    }
+}
+
+.statistics-chart-hidden {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.statistics-chart {
+    color: var(--statistics-text-color);
+    font-size: var(--statistics-font-size);
+}
+
+.statistics-chart-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    min-inline-size: 0;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    border: 0;
+}
+
+.statistics-chart-tab {
+    padding-block: 0.375rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--statistics-radius);
+    background: var(--statistics-tab-background);
+    cursor: pointer;
+}
+
+.statistics-chart-tab:has(:checked) {
+    background: var(--statistics-tab-selected-background);
+    color: var(--statistics-tab-selected-color);
+    font-weight: 600;
+}
+
+.statistics-chart-tab:has(:focus-visible),
+.statistics-chart-plot:focus-visible {
+    outline: 2px solid var(--statistics-focus-color);
+    outline-offset: 2px;
+}
+
+.statistics-chart-panel {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.5rem;
+    padding-block-start: 0.5rem;
+}
+
+.statistics-chart:has(.statistics-chart-tabs) .statistics-chart-panel {
+    display: none;
+}
+
+.statistics-chart:has(.statistics-chart-tab:nth-of-type(1) :checked) .statistics-chart-panel:nth-of-type(1),
+.statistics-chart:has(.statistics-chart-tab:nth-of-type(2) :checked) .statistics-chart-panel:nth-of-type(2),
+.statistics-chart:has(.statistics-chart-tab:nth-of-type(3) :checked) .statistics-chart-panel:nth-of-type(3),
+.statistics-chart:has(.statistics-chart-tab:nth-of-type(4) :checked) .statistics-chart-panel:nth-of-type(4) {
+    display: grid;
+}
+
+:where(.statistics-chart-panel:nth-of-type(1)) {
+    color: var(--statistics-series-1);
+}
+
+:where(.statistics-chart-panel:nth-of-type(2)) {
+    color: var(--statistics-series-2);
+}
+
+:where(.statistics-chart-panel:nth-of-type(3)) {
+    color: var(--statistics-series-3);
+}
+
+:where(.statistics-chart-panel:nth-of-type(4)) {
+    color: var(--statistics-series-4);
+}
+
+.statistics-chart-ticks {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+    color: var(--statistics-text-color);
+    font-variant-numeric: tabular-nums;
+    list-style: none;
+    text-align: end;
+}
+
+.statistics-chart-panel:dir(rtl) .statistics-chart-ticks {
+    text-align: start;
+}
+
+.statistics-chart-ticks li {
+    line-height: 0;
+}
+
+.statistics-chart-plot {
+    grid-column: 2;
+    position: relative;
+    touch-action: pan-y;
+}
+
+.statistics-chart-svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+}
+
+.statistics-chart-grid {
+    color: var(--statistics-grid-color);
+}
+
+.statistics-chart-baseline {
+    color: var(--statistics-baseline-color);
+}
+
+.statistics-chart-area {
+    fill-opacity: var(--statistics-area-opacity);
+}
+
+.statistics-chart-line,
+.statistics-chart-today {
+    stroke-width: var(--statistics-line-width);
+}
+
+.statistics-chart-guide,
+.statistics-chart-dot,
+.statistics-chart-tip {
+    position: absolute;
+    pointer-events: none;
+}
+
+.statistics-chart-guide[hidden],
+.statistics-chart-dot[hidden],
+.statistics-chart-tip[hidden] {
+    display: none;
+}
+
+.statistics-chart-guide {
+    inset-block: 0;
+    inline-size: 1px;
+    translate: -50% 0;
+    background: var(--statistics-baseline-color);
+}
+
+.statistics-chart-dot {
+    inline-size: 0.75rem;
+    block-size: 0.75rem;
+    translate: -50% -50%;
+    border: 2px solid var(--statistics-tip-background);
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.statistics-chart-tip {
+    z-index: 1;
+    padding-block: 0.375rem;
+    padding-inline: 0.625rem;
+    border: var(--statistics-tip-border);
+    border-radius: var(--statistics-radius);
+    background: var(--statistics-tip-background);
+    box-shadow: var(--statistics-tip-shadow);
+    color: var(--statistics-text-color);
+    white-space: nowrap;
+}
+
+.statistics-chart-tip p {
+    margin: 0;
+}
+
+.statistics-chart-tip [data-statistics-tip-value] {
+    font-weight: 600;
+}
+
+.statistics-chart-days {
+    grid-column: 2;
+    position: relative;
+    block-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    color: var(--statistics-text-color);
+    list-style: none;
+    container-type: inline-size;
+}
+
+.statistics-chart-day {
+    position: absolute;
+    translate: -50% 0;
+    padding-block-start: 0.25rem;
+    white-space: nowrap;
+    unicode-bidi: plaintext;
+}
+
+.statistics-chart-day[data-edge='start'] {
+    translate: 0 0;
+}
+
+.statistics-chart-day[data-edge='end'] {
+    translate: -100% 0;
+}
+
+.statistics-chart-day[data-minor] {
+    color: var(--statistics-minor-text-color);
+}
+
+/* Every other day label, so a narrow axis has room for the rest. */
+@container (width < 35rem) {
+    .statistics-chart-day[data-minor] {
+        display: none;
+    }
+}
+
+.statistics-bars {
+    color: var(--statistics-text-color);
+    font-size: var(--statistics-font-size);
+}
+
+.statistics-bars-svg {
+    display: block;
+}
+
+.statistics-bars-fill {
+    fill: var(--statistics-bar-color);
+    rx: var(--statistics-bar-radius);
+}

@@ -1,0 +1,51 @@
+{
+    "name": "@ismailnakkar/statistics-chart",
+    "version": "0.1.0",
+    "description": "The stylesheet and script for the charts of ismailnakkar/laravel-statistics: their layout, tabs and axes, and a slider tooltip for pointer, touch and keyboard.",
+    "keywords": [
+        "chart",
+        "tooltip",
+        "statistics",
+        "laravel"
+    ],
+    "homepage": "https://github.com/ismailnakkar/statistics-chart",
+    "bugs": {
+        "url": "https://github.com/ismailnakkar/statistics-chart/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ismailnakkar/statistics-chart.git"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "Ismail Nakkar",
+        "email": "juge.steam@gmail.com"
+    },
+    "type": "module",
+    "main": "src/index.js",
+    "types": "src/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./src/index.d.ts",
+            "default": "./src/index.js"
+        },
+        "./style.css": {
+            "types": "./src/style.d.css.ts",
+            "default": "./src/style.css"
+        }
+    },
+    "files": [
+        "src"
+    ],
+    "publishConfig": {
+        "access": "public"
+    },
+    "scripts": {
+        "test": "vitest run",
+        "prepublishOnly": "npm test"
+    },
+    "devDependencies": {
+        "happy-dom": "^21.0.4",
+        "vitest": "^5.1.0"
+    }
+}
