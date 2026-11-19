@@ -1,53 +1,193 @@
-<!-- Rendered by laravel-statistics 0.3.0: <x-statistics::line-chart :chart="Chart::period($period, TallyMeasure::publisherEarnings)" id="earnings" />, Saturday 12 to Monday 14 September 2026, on the 14th. -->
+<!-- Rendered by laravel-statistics 0.5.0: <x-statistics::line-chart :chart="Chart::month($month, referrals: false)" id="earnings" />, 1 to 3 November 2026 against October's same days, on the 3rd. -->
 <div class="statistics-chart" id="earnings">
     
+        <fieldset class="statistics-chart-tabs">
+                    <legend class="statistics-chart-hidden">Chart metric</legend>
+                                        <label class="statistics-chart-tab" data-measure="paid_views">
+                                    <input type="radio" class="statistics-chart-hidden" name="earnings-measure" checked>
+                                <span class="statistics-chart-tab-label">Paid views</span>
+                <span class="statistics-chart-figure">7</span>
+                                    <span class="statistics-chart-tab-change"><span class="statistics-chart-chip" dir="ltr" data-trend="up">+50%</span><span>vs Oct</span></span>
+                            </label>
+                                <label class="statistics-chart-tab" data-measure="publisher_earnings">
+                                    <input type="radio" class="statistics-chart-hidden" name="earnings-measure" >
+                                <span class="statistics-chart-tab-label">Publisher earnings</span>
+                <span class="statistics-chart-figure">0.0070</span>
+                                    <span class="statistics-chart-tab-change"><span class="statistics-chart-chip" dir="ltr" data-trend="down">-25%</span><span>vs Oct</span></span>
+                            </label>
+                                <label class="statistics-chart-tab" data-measure="cpm">
+                                    <input type="radio" class="statistics-chart-hidden" name="earnings-measure" >
+                                <span class="statistics-chart-tab-label">Average CPM</span>
+                <span class="statistics-chart-figure">1.00</span>
+                                    <span class="statistics-chart-tab-change"><span class="statistics-chart-chip" dir="ltr" data-trend="down">-50%</span><span>vs Oct</span></span>
+                            </label>
+            </fieldset>
+
+            
+        <div class="statistics-chart-panel" data-measure="paid_views">
+            <p id="earnings-summary-1" hidden>Paid views from November 1, 2026 to November 3, 2026. Total 7. Best day November 1, 2026, at 4. Daily average 3.</p>
+
+            <p class="statistics-chart-context" aria-live="polite" data-statistics-context>
+                <span data-statistics-caption>Paid views, <strong>November</strong> so far</span>
+                <span class="statistics-chart-chip" dir="ltr" data-statistics-chip hidden></span>
+                <span data-statistics-previous-day hidden></span>
+                                    <span class="statistics-chart-average" data-statistics-average>Daily average <strong>3</strong></span>
+                            </p>
+
+            <div class="statistics-chart-frame" dir="ltr">
+                <ol class="statistics-chart-ticks" aria-hidden="true">
+                                            <li>0</li>
+                                            <li>2</li>
+                                            <li>4</li>
+                                            <li>6</li>
+                                    </ol>
+
+                <div class="statistics-chart-plot" aria-describedby="earnings-summary-1" data-statistics-plot data-statistics-name="Paid views" data-statistics-points="[[0,34.722],[50,64.444],[100,79.306]]" data-statistics-days="[[&quot;&quot;,&quot;Sun 1 Nov: 4&quot;],[&quot;&quot;,&quot;Mon 2 Nov: 2&quot;],[&quot;&quot;,&quot;Tue 3 Nov, so far: 1&quot;]]" data-statistics-labels="[&quot;Sun 1 Nov: 4&quot;,&quot;Mon 2 Nov: 2&quot;,&quot;Tue 3 Nov, so far: 1&quot;]" data-statistics-changes="[100,0,null]" data-statistics-previous-points="[[0,64.444],[50,64.444],[100,19.861]]" data-statistics-previous-labels="[[&quot;1 Oct: &quot;,&quot;2&quot;],[&quot;2 Oct: &quot;,&quot;2&quot;],[&quot;3 Oct: &quot;,&quot;5&quot;]]">
+                    
+                    <svg class="statistics-chart-svg" viewBox="0 0 600 240" preserveAspectRatio="none" role="img" aria-labelledby="earnings-summary-1">
+                        
+                        <g class="statistics-chart-grid" stroke="currentColor" stroke-dasharray="2 4">
+                                                            <line x1="0" x2="600" y1="226" y2="226" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="154.67" y2="154.67" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="83.33" y2="83.33" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="12" y2="12" vector-effect="non-scaling-stroke"/>
+                                                                                        <line x1="0" x2="0" y1="12" y2="226"  vector-effect="non-scaling-stroke"/>
+                                                            <line x1="600" x2="600" y1="12" y2="226"  vector-effect="non-scaling-stroke"/>
+                                                    </g>
+
+                                                    <path class="statistics-chart-previous" d="M0,154.67 C100,154.67 200,154.67 300,154.67 C400,154.67 500,101.17 600,47.67" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                                                                            <path class="statistics-chart-line" d="M0,83.33 C100,110.08 200,136.84 300,154.67"  fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                                                                            <path class="statistics-chart-today" d="M300,154.67 C400,172.5 500,181.42 600,190.33" fill="none" stroke="currentColor" stroke-dasharray="2 4" stroke-linecap="round" vector-effect="non-scaling-stroke"><title>Today so far</title></path>
+                        
+                        
+                        <g class="statistics-chart-points" fill="transparent">
+                                                                                                <circle cx="0" cy="83.33" r="8"><title>Sun 1 Nov: 4</title></circle>
+                                                                                                                                <circle cx="300" cy="154.67" r="8"><title>Mon 2 Nov: 2</title></circle>
+                                                                                                                                <circle cx="600" cy="190.33" r="8"><title>Tue 3 Nov, so far: 1</title></circle>
+                                                                                    </g>
+                    </svg>
+
+                    <div class="statistics-chart-guide" data-statistics-guide hidden aria-hidden="true"></div>
+                    <div class="statistics-chart-previous-dot" data-statistics-previous-dot hidden aria-hidden="true"></div>
+                    <div class="statistics-chart-dot" data-statistics-dot hidden aria-hidden="true"></div>
+                </div>
+
+                <ol class="statistics-chart-days" aria-hidden="true">
+                                            <li class="statistics-chart-day" style="inset-inline-start: 0%"  data-edge="start"  >1 Nov</li>
+                                            <li class="statistics-chart-day" style="inset-inline-start: 100%"  data-edge="end"  >Today</li>
+                                    </ol>
+            </div>
+        </div>
             
         <div class="statistics-chart-panel" data-measure="publisher_earnings">
-            <p id="earnings-summary-1" hidden>Publisher earnings from September 12, 2026 to September 14, 2026. Total 0.9407. Best day September 13, 2026, at 0.6007.</p>
+            <p id="earnings-summary-2" hidden>Publisher earnings from November 1, 2026 to November 3, 2026. Total 0.0070. Best day November 1, 2026, at 0.0040. Daily average 0.0030.</p>
 
-            <ol class="statistics-chart-ticks" dir="ltr" aria-hidden="true">
-                                    <li>0.0000</li>
-                                    <li>0.2000</li>
-                                    <li>0.4000</li>
-                                    <li>0.6000</li>
-                                    <li>0.8000</li>
-                            </ol>
+            <p class="statistics-chart-context" aria-live="polite" data-statistics-context>
+                <span data-statistics-caption>Publisher earnings, <strong>November</strong> so far</span>
+                <span class="statistics-chart-chip" dir="ltr" data-statistics-chip hidden></span>
+                <span data-statistics-previous-day hidden></span>
+                                    <span class="statistics-chart-average" data-statistics-average>Daily average <strong>0.0030</strong></span>
+                            </p>
 
-            <div class="statistics-chart-plot" dir="ltr" style="aspect-ratio: 600 / 240" aria-describedby="earnings-summary-1" data-statistics-plot data-statistics-name="Publisher earnings" data-statistics-points="[[0,58.75],[50,24.913],[100,98.75]]" data-statistics-values="[&quot;0.3300&quot;,&quot;0.6007&quot;,&quot;0.0100&quot;]" data-statistics-days="[&quot;Sat 12 Sep&quot;,&quot;Sun 13 Sep&quot;,&quot;Mon 14 Sep, so far&quot;]" data-statistics-labels="[&quot;Sat 12 Sep: 0.3300&quot;,&quot;Sun 13 Sep: 0.6007&quot;,&quot;Mon 14 Sep, so far: 0.0100&quot;]">
-                <svg class="statistics-chart-svg" viewBox="0 0 600 240" role="img" aria-labelledby="earnings-summary-1">
-                                            <g class="statistics-chart-grid" stroke="currentColor">
-                                                            <line x1="0" x2="600" y1="180" y2="180" vector-effect="non-scaling-stroke"/>
-                                                            <line x1="0" x2="600" y1="120" y2="120" vector-effect="non-scaling-stroke"/>
-                                                            <line x1="0" x2="600" y1="60" y2="60" vector-effect="non-scaling-stroke"/>
-                                                            <line x1="0" x2="600" y1="0" y2="0" vector-effect="non-scaling-stroke"/>
+            <div class="statistics-chart-frame" dir="ltr">
+                <ol class="statistics-chart-ticks" aria-hidden="true">
+                                            <li>0.0000</li>
+                                            <li>0.0020</li>
+                                            <li>0.0040</li>
+                                            <li>0.0060</li>
+                                    </ol>
+
+                <div class="statistics-chart-plot" aria-describedby="earnings-summary-2" data-statistics-plot data-statistics-name="Publisher earnings" data-statistics-points="[[0,34.722],[50,64.444],[100,79.306]]" data-statistics-days="[[&quot;&quot;,&quot;Sun 1 Nov: 0.0040&quot;],[&quot;&quot;,&quot;Mon 2 Nov: 0.0020&quot;],[&quot;&quot;,&quot;Tue 3 Nov, so far: 0.0010&quot;]]" data-statistics-labels="[&quot;Sun 1 Nov: 0.0040&quot;,&quot;Mon 2 Nov: 0.0020&quot;,&quot;Tue 3 Nov, so far: 0.0010&quot;]" data-statistics-changes="[-33,0,null]" data-statistics-previous-points="[[0,5],[50,64.444],[100,19.861]]" data-statistics-previous-labels="[[&quot;1 Oct: &quot;,&quot;0.0060&quot;],[&quot;2 Oct: &quot;,&quot;0.0020&quot;],[&quot;3 Oct: &quot;,&quot;0.0050&quot;]]">
+                    
+                    <svg class="statistics-chart-svg" viewBox="0 0 600 240" preserveAspectRatio="none" role="img" aria-labelledby="earnings-summary-2">
+                        
+                        <g class="statistics-chart-grid" stroke="currentColor" stroke-dasharray="2 4">
+                                                            <line x1="0" x2="600" y1="226" y2="226" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="154.67" y2="154.67" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="83.33" y2="83.33" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="12" y2="12" vector-effect="non-scaling-stroke"/>
+                                                                                        <line x1="0" x2="0" y1="12" y2="226"  vector-effect="non-scaling-stroke"/>
+                                                            <line x1="600" x2="600" y1="12" y2="226"  vector-effect="non-scaling-stroke"/>
                                                     </g>
-                                        <line class="statistics-chart-baseline" x1="0" x2="600" y1="240" y2="240" stroke="currentColor" vector-effect="non-scaling-stroke"/>
 
-                                                                <path class="statistics-chart-line" d="M0,141 C100,100.39 200,59.79 300,59.79" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
-                                                                <path class="statistics-chart-today" d="M300,59.79 C400,59.79 500,148.39 600,237" fill="none" stroke="currentColor" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"><title>Today so far</title></path>
-                    
-                    
-                    
-                    <g class="statistics-chart-points" fill="transparent">
-                                                    <circle cx="0" cy="141" r="8"><title>Sat 12 Sep: 0.3300</title></circle>
-                                                    <circle cx="300" cy="59.79" r="8"><title>Sun 13 Sep: 0.6007</title></circle>
-                                                    <circle cx="600" cy="237" r="8"><title>Mon 14 Sep, so far: 0.0100</title></circle>
-                                            </g>
-                                            <circle class="statistics-chart-best" cx="300" cy="59.79" r="5" fill="currentColor"><title>Best day</title></circle>
-                                    </svg>
+                                                    <path class="statistics-chart-previous" d="M0,12 C100,83.34 200,154.67 300,154.67 C400,154.67 500,101.17 600,47.67" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                                                                            <path class="statistics-chart-line" d="M0,83.33 C100,110.08 200,136.84 300,154.67"  fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                                                                            <path class="statistics-chart-today" d="M300,154.67 C400,172.5 500,181.42 600,190.33" fill="none" stroke="currentColor" stroke-dasharray="2 4" stroke-linecap="round" vector-effect="non-scaling-stroke"><title>Today so far</title></path>
+                        
+                        
+                        <g class="statistics-chart-points" fill="transparent">
+                                                                                                <circle cx="0" cy="83.33" r="8"><title>Sun 1 Nov: 0.0040</title></circle>
+                                                                                                                                <circle cx="300" cy="154.67" r="8"><title>Mon 2 Nov: 0.0020</title></circle>
+                                                                                                                                <circle cx="600" cy="190.33" r="8"><title>Tue 3 Nov, so far: 0.0010</title></circle>
+                                                                                    </g>
+                    </svg>
 
-                <div class="statistics-chart-guide" data-statistics-guide hidden aria-hidden="true"></div>
-                <div class="statistics-chart-dot" data-statistics-dot hidden aria-hidden="true"></div>
-                <div class="statistics-chart-tip" data-statistics-tip hidden aria-hidden="true">
-                    <p data-statistics-tip-day dir="auto"></p>
-                    <p data-statistics-tip-value dir="auto"></p>
+                    <div class="statistics-chart-guide" data-statistics-guide hidden aria-hidden="true"></div>
+                    <div class="statistics-chart-previous-dot" data-statistics-previous-dot hidden aria-hidden="true"></div>
+                    <div class="statistics-chart-dot" data-statistics-dot hidden aria-hidden="true"></div>
                 </div>
-            </div>
 
-            <ol class="statistics-chart-days" dir="ltr" aria-hidden="true">
-                                    <li class="statistics-chart-day" style="inset-inline-start: 0%"  data-edge="start"  >12 Sep</li>
-                                    <li class="statistics-chart-day" style="inset-inline-start: 50%"   data-minor >13 Sep</li>
-                                    <li class="statistics-chart-day" style="inset-inline-start: 100%"  data-edge="end"  >14 Sep</li>
-                            </ol>
+                <ol class="statistics-chart-days" aria-hidden="true">
+                                            <li class="statistics-chart-day" style="inset-inline-start: 0%"  data-edge="start"  >1 Nov</li>
+                                            <li class="statistics-chart-day" style="inset-inline-start: 100%"  data-edge="end"  >Today</li>
+                                    </ol>
+            </div>
+        </div>
+            
+        <div class="statistics-chart-panel" data-measure="cpm">
+            <p id="earnings-summary-3" hidden>Average CPM from November 1, 2026 to November 3, 2026. Average 1.00. Best day November 1, 2026, at 1.00. Daily average 1.00.</p>
+
+            <p class="statistics-chart-context" aria-live="polite" data-statistics-context>
+                <span data-statistics-caption>Average CPM, <strong>November</strong> so far</span>
+                <span class="statistics-chart-chip" dir="ltr" data-statistics-chip hidden></span>
+                <span data-statistics-previous-day hidden></span>
+                                    <span class="statistics-chart-average" data-statistics-average>Daily average <strong>1.00</strong></span>
+                            </p>
+
+            <div class="statistics-chart-frame" dir="ltr">
+                <ol class="statistics-chart-ticks" aria-hidden="true">
+                                            <li>0.00</li>
+                                            <li>1.00</li>
+                                            <li>2.00</li>
+                                            <li>3.00</li>
+                                            <li>4.00</li>
+                                    </ol>
+
+                <div class="statistics-chart-plot" aria-describedby="earnings-summary-3" data-statistics-plot data-statistics-name="Average CPM" data-statistics-points="[[0,71.875],[50,71.875],[100,71.875]]" data-statistics-days="[[&quot;&quot;,&quot;Sun 1 Nov: 1.00&quot;],[&quot;&quot;,&quot;Mon 2 Nov: 1.00&quot;],[&quot;&quot;,&quot;Tue 3 Nov, so far: 1.00&quot;]]" data-statistics-labels="[&quot;Sun 1 Nov: 1.00&quot;,&quot;Mon 2 Nov: 1.00&quot;,&quot;Tue 3 Nov, so far: 1.00&quot;]" data-statistics-changes="[-67,0,null]" data-statistics-previous-points="[[0,27.292],[50,71.875],[100,71.875]]" data-statistics-previous-labels="[[&quot;1 Oct: &quot;,&quot;3.00&quot;],[&quot;2 Oct: &quot;,&quot;1.00&quot;],[&quot;3 Oct: &quot;,&quot;1.00&quot;]]">
+                    
+                    <svg class="statistics-chart-svg" viewBox="0 0 600 240" preserveAspectRatio="none" role="img" aria-labelledby="earnings-summary-3">
+                        
+                        <g class="statistics-chart-grid" stroke="currentColor" stroke-dasharray="2 4">
+                                                            <line x1="0" x2="600" y1="226" y2="226" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="172.5" y2="172.5" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="119" y2="119" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="65.5" y2="65.5" vector-effect="non-scaling-stroke"/>
+                                                            <line x1="0" x2="600" y1="12" y2="12" vector-effect="non-scaling-stroke"/>
+                                                                                        <line x1="0" x2="0" y1="12" y2="226"  vector-effect="non-scaling-stroke"/>
+                                                            <line x1="600" x2="600" y1="12" y2="226"  vector-effect="non-scaling-stroke"/>
+                                                    </g>
+
+                                                    <path class="statistics-chart-previous" d="M0,65.5 C100,119 200,172.5 300,172.5 C400,172.5 500,172.5 600,172.5" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+                                                                            <path class="statistics-chart-line" d="M0,172.5 C100,172.5 200,172.5 300,172.5"  fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+                                                                            <path class="statistics-chart-today" d="M300,172.5 C400,172.5 500,172.5 600,172.5" fill="none" stroke="currentColor" stroke-dasharray="2 4" stroke-linecap="round" vector-effect="non-scaling-stroke"><title>Today so far</title></path>
+                        
+                        
+                        <g class="statistics-chart-points" fill="transparent">
+                                                                                                <circle cx="0" cy="172.5" r="8"><title>Sun 1 Nov: 1.00</title></circle>
+                                                                                                                                <circle cx="300" cy="172.5" r="8"><title>Mon 2 Nov: 1.00</title></circle>
+                                                                                                                                <circle cx="600" cy="172.5" r="8"><title>Tue 3 Nov, so far: 1.00</title></circle>
+                                                                                    </g>
+                    </svg>
+
+                    <div class="statistics-chart-guide" data-statistics-guide hidden aria-hidden="true"></div>
+                    <div class="statistics-chart-previous-dot" data-statistics-previous-dot hidden aria-hidden="true"></div>
+                    <div class="statistics-chart-dot" data-statistics-dot hidden aria-hidden="true"></div>
+                </div>
+
+                <ol class="statistics-chart-days" aria-hidden="true">
+                                            <li class="statistics-chart-day" style="inset-inline-start: 0%"  data-edge="start"  >1 Nov</li>
+                                            <li class="statistics-chart-day" style="inset-inline-start: 100%"  data-edge="end"  >Today</li>
+                                    </ol>
+            </div>
         </div>
     </div>

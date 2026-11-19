@@ -1,10 +1,10 @@
 {
     "name": "@ismailnakkar/statistics-chart",
-    "version": "0.2.0",
-    "description": "The stylesheet and script for the charts of ismailnakkar/laravel-statistics: their layout, tabs and axes, and a slider tooltip for pointer, touch and keyboard.",
+    "version": "0.3.0",
+    "description": "The stylesheet and script for the charts of ismailnakkar/laravel-statistics: their layout, metric tabs and axes, and a context line that follows the day under the pointer, touch or keyboard.",
     "keywords": [
         "chart",
-        "tooltip",
+        "line-chart",
         "statistics",
         "laravel"
     ],

@@ -1,46 +1,30 @@
+/*
+ * The light colours only. Lightning CSS (Vite's, Tailwind v4's) lowers light-dark() to variables it sets only where
+ * the same stylesheet declares color-scheme, so a pair here breaks in an app's build. A dark page sets its own (README).
+ */
 :where(:root) {
-    --statistics-series-1: light-dark(#2563eb, #60a5fa);
-    --statistics-series-2: light-dark(#d97706, #fbbf24);
-    --statistics-series-3: light-dark(#059669, #34d399);
-    --statistics-series-4: light-dark(#7c3aed, #a78bfa);
-    --statistics-area-opacity: 0.2;
-    --statistics-line-width: 2.5;
-    --statistics-grid-color: light-dark(#e5e7eb, #374151);
-    --statistics-baseline-color: light-dark(#9ca3af, #6b7280);
-    --statistics-text-color: light-dark(#374151, #e5e7eb);
-    --statistics-minor-text-color: light-dark(#6b7280, #9ca3af);
+    --statistics-line-color: #3d5afe;
+    --statistics-line-width: 2;
+    --statistics-previous-color: #aeb5c6;
+    --statistics-previous-width: 1.5;
+    --statistics-grid-color: #e6e8ef;
+    --statistics-guide-color: #aeb5c6;
+    --statistics-text-color: #1c2130;
+    --statistics-muted-color: #687086;
+    --statistics-background: #fff;
     --statistics-font-size: 0.75rem;
-    --statistics-tab-background: light-dark(#f3f4f6, #1f2937);
-    --statistics-tab-selected-background: light-dark(#dbeafe, #1e3a8a);
-    --statistics-tab-selected-color: currentColor;
-    --statistics-tip-background: light-dark(#fff, #111827);
-    --statistics-tip-border: 1px solid light-dark(#e5e7eb, #374151);
-    --statistics-tip-shadow: 0 4px 12px light-dark(rgb(0 0 0 / 0.12), rgb(0 0 0 / 0.5));
+    --statistics-figure-size: 1.25rem;
+    --statistics-plot-height: 240px;
+    --statistics-up-color: #12795a;
+    --statistics-up-background: #e2f3eb;
+    --statistics-down-color: #bd3f0b;
+    --statistics-down-background: #fcebdf;
+    --statistics-flat-color: #5c6479;
+    --statistics-flat-background: #eceef3;
     --statistics-radius: 0.375rem;
-    --statistics-focus-color: light-dark(#2563eb, #60a5fa);
-    --statistics-bar-color: light-dark(#2563eb, #60a5fa);
+    --statistics-focus-color: #3d5afe;
+    --statistics-bar-color: #2563eb;
     --statistics-bar-radius: 3px;
-}
-
-/* Before light-dark() (Chrome 123, Firefox 120, Safari 17.5), the light colours. */
-@supports not (color: light-dark(#000, #fff)) {
-    :where(:root) {
-        --statistics-series-1: #2563eb;
-        --statistics-series-2: #d97706;
-        --statistics-series-3: #059669;
-        --statistics-series-4: #7c3aed;
-        --statistics-grid-color: #e5e7eb;
-        --statistics-baseline-color: #9ca3af;
-        --statistics-text-color: #374151;
-        --statistics-minor-text-color: #6b7280;
-        --statistics-tab-background: #f3f4f6;
-        --statistics-tab-selected-background: #dbeafe;
-        --statistics-tip-background: #fff;
-        --statistics-tip-border: 1px solid #e5e7eb;
-        --statistics-tip-shadow: 0 4px 12px rgb(0 0 0 / 0.12);
-        --statistics-focus-color: #2563eb;
-        --statistics-bar-color: #2563eb;
-    }
 }
 
 .statistics-chart-hidden {
@@ -53,33 +37,128 @@
     white-space: nowrap;
 }
 
+/* A container, so the tabs follow the chart's own width: give it one in a flex or grid parent. */
 .statistics-chart {
+    container-type: inline-size;
     color: var(--statistics-text-color);
-    font-size: var(--statistics-font-size);
 }
 
+/* The metric tabs: one row of equal columns, the chosen one topped in its measure's colour. */
 .statistics-chart-tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem;
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
     min-inline-size: 0;
-    margin: 0 0 0.75rem;
+    margin: 0 0 1rem;
     padding: 0;
     border: 0;
+    border-block-end: 1px solid var(--statistics-grid-color);
 }
 
 .statistics-chart-tab {
-    padding-block: 0.375rem;
-    padding-inline: 0.75rem;
-    border-radius: var(--statistics-radius);
-    background: var(--statistics-tab-background);
+    display: grid;
+    gap: 2px;
+    align-content: start;
+    min-inline-size: 0;
+    padding-block: 1rem 0.875rem;
+    padding-inline: 1.25rem;
+    border-block-start: 3px solid transparent;
+}
+
+.statistics-chart-tab + .statistics-chart-tab {
+    border-inline-start: 1px solid var(--statistics-grid-color);
+}
+
+label.statistics-chart-tab {
     cursor: pointer;
 }
 
-.statistics-chart-tab:has(:checked) {
-    background: var(--statistics-tab-selected-background);
-    color: var(--statistics-tab-selected-color);
+label.statistics-chart-tab:not(:has(:checked)):hover {
+    background: color-mix(in srgb, var(--statistics-muted-color) 4%, var(--statistics-background));
+}
+
+/* The chosen tab, and a lone chart's one block. */
+.statistics-chart-tab:has(:checked),
+div.statistics-chart-tab {
+    border-block-start-color: var(--statistics-line-color);
+    background: linear-gradient(color-mix(in srgb, var(--statistics-line-color) 6%, var(--statistics-background)), var(--statistics-background));
+}
+
+.statistics-chart-tab-label {
+    color: var(--statistics-muted-color);
+    font-size: 0.8125rem;
+}
+
+.statistics-chart-figure {
+    color: var(--statistics-text-color);
+    font-size: var(--statistics-figure-size);
     font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    overflow-wrap: anywhere;
+}
+
+.statistics-chart-tab-change {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.375rem;
+    align-items: center;
+    color: var(--statistics-muted-color);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Two columns on a narrower chart, each row after the first under a line; one on a narrow one. A lone block stays whole. */
+@container (width < 720px) {
+    fieldset.statistics-chart-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-flow: row;
+    }
+
+    .statistics-chart-tab:nth-of-type(odd) {
+        border-inline-start: 0;
+    }
+
+    .statistics-chart-tab:nth-of-type(n + 3) {
+        box-shadow: inset 0 1px 0 var(--statistics-grid-color);
+    }
+
+    /* Three tabs stay in one row: two to a row would leave the third alone at half width. */
+    fieldset.statistics-chart-tabs:has(> .statistics-chart-tab:nth-of-type(3):last-of-type) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    fieldset.statistics-chart-tabs:has(> .statistics-chart-tab:nth-of-type(3):last-of-type) > .statistics-chart-tab:nth-of-type(3) {
+        border-inline-start: 1px solid var(--statistics-grid-color);
+        box-shadow: none;
+    }
+}
+
+/* Below 480px three tabs stack, one to a row. */
+@container (width < 480px) {
+    fieldset.statistics-chart-tabs:has(> .statistics-chart-tab:nth-of-type(3):last-of-type) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    fieldset.statistics-chart-tabs:has(> .statistics-chart-tab:nth-of-type(3):last-of-type) > .statistics-chart-tab + .statistics-chart-tab {
+        border-inline-start: 0;
+        box-shadow: inset 0 1px 0 var(--statistics-grid-color);
+    }
+}
+
+@container (width < 360px) {
+    .statistics-chart-tabs {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .statistics-chart-tab + .statistics-chart-tab {
+        border-inline-start: 0;
+    }
+
+    .statistics-chart-tab:nth-of-type(n + 2) {
+        box-shadow: inset 0 1px 0 var(--statistics-grid-color);
+    }
 }
 
 .statistics-chart-tab:has(:focus-visible),
@@ -88,14 +167,7 @@
     outline-offset: 2px;
 }
 
-.statistics-chart-panel {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    column-gap: 0.5rem;
-    padding-block-start: 0.5rem;
-}
-
-.statistics-chart:has(.statistics-chart-tabs) .statistics-chart-panel {
+.statistics-chart:has(fieldset.statistics-chart-tabs) .statistics-chart-panel {
     display: none;
 }
 
@@ -103,23 +175,71 @@
 .statistics-chart:has(.statistics-chart-tab:nth-of-type(2) :checked) .statistics-chart-panel:nth-of-type(2),
 .statistics-chart:has(.statistics-chart-tab:nth-of-type(3) :checked) .statistics-chart-panel:nth-of-type(3),
 .statistics-chart:has(.statistics-chart-tab:nth-of-type(4) :checked) .statistics-chart-panel:nth-of-type(4) {
+    display: block;
+}
+
+/* The line's colour, at no specificity, so a measure's --statistics-line-color on its data-measure wins. */
+:where(.statistics-chart-panel) {
+    color: var(--statistics-line-color);
+}
+
+/* The line under the tabs: the month and its daily average, or the day shown. The script holds its height then. */
+.statistics-chart-context {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 0.5rem;
+    align-items: center;
+    margin: 0 0 0.5rem;
+    color: var(--statistics-muted-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.statistics-chart-context [hidden] {
+    display: none;
+}
+
+/* The month or the dates, the values and the day shown. */
+.statistics-chart-context strong {
+    color: var(--statistics-text-color);
+    font-weight: 600;
+}
+
+/* Set off from the caption by a rule, which no screen reader reads. */
+.statistics-chart-average {
+    padding-inline-start: 0.5rem;
+    border-inline-start: 1px solid var(--statistics-grid-color);
+}
+
+.statistics-chart-chip {
+    padding-block: 1px;
+    padding-inline: 0.4375rem;
+    border-radius: var(--statistics-radius);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.statistics-chart-chip[data-trend='up'] {
+    background: var(--statistics-up-background);
+    color: var(--statistics-up-color);
+}
+
+.statistics-chart-chip[data-trend='down'] {
+    background: var(--statistics-down-background);
+    color: var(--statistics-down-color);
+}
+
+/* A change that rounds to 0%: neither up nor down. */
+.statistics-chart-chip[data-trend='flat'] {
+    background: var(--statistics-flat-background);
+    color: var(--statistics-flat-color);
+}
+
+/* The axes and the plot, left to right in every language: the values on the left, the days underneath. */
+.statistics-chart-frame {
     display: grid;
-}
-
-:where(.statistics-chart-panel:nth-of-type(1)) {
-    color: var(--statistics-series-1);
-}
-
-:where(.statistics-chart-panel:nth-of-type(2)) {
-    color: var(--statistics-series-2);
-}
-
-:where(.statistics-chart-panel:nth-of-type(3)) {
-    color: var(--statistics-series-3);
-}
-
-:where(.statistics-chart-panel:nth-of-type(4)) {
-    color: var(--statistics-series-4);
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 0.75rem;
 }
 
 .statistics-chart-ticks {
@@ -128,25 +248,27 @@
     flex-direction: column-reverse;
     justify-content: space-between;
     margin: 0;
-    padding: 0;
-    color: var(--statistics-text-color);
+    color: var(--statistics-muted-color);
+    font-size: var(--statistics-font-size);
     font-variant-numeric: tabular-nums;
     list-style: none;
     text-align: end;
-}
-
-.statistics-chart-panel:dir(rtl) .statistics-chart-ticks {
-    text-align: start;
+    /* The drawing's inner margin, 12 and 14 of its 240 (LineChart::MARGIN_TOP, MARGIN_BOTTOM): each value on its line. */
+    padding-block: calc(var(--statistics-plot-height) * 12 / 240) calc(var(--statistics-plot-height) * 14 / 240);
+    padding-inline: 0;
 }
 
 .statistics-chart-ticks li {
     line-height: 0;
 }
 
+/* A container as wide as the days under it, so a minor day's line hides with its label. */
 .statistics-chart-plot {
     grid-column: 2;
     position: relative;
+    block-size: var(--statistics-plot-height);
     touch-action: pan-y;
+    container-type: inline-size;
 }
 
 .statistics-chart-svg {
@@ -160,12 +282,9 @@
     color: var(--statistics-grid-color);
 }
 
-.statistics-chart-baseline {
-    color: var(--statistics-baseline-color);
-}
-
-.statistics-chart-area {
-    fill-opacity: var(--statistics-area-opacity);
+.statistics-chart-previous {
+    color: var(--statistics-previous-color);
+    stroke-width: var(--statistics-previous-width);
 }
 
 .statistics-chart-line,
@@ -173,62 +292,59 @@
     stroke-width: var(--statistics-line-width);
 }
 
-.statistics-chart-guide,
-.statistics-chart-dot,
-.statistics-chart-tip {
+/* A lone day: its zero-length line, a dot by its round cap. */
+.statistics-chart-line[data-lone] {
+    stroke-width: calc(var(--statistics-line-width) * 4);
+}
+
+.statistics-chart-plot .statistics-chart-guide,
+.statistics-chart-plot .statistics-chart-dot,
+.statistics-chart-plot .statistics-chart-previous-dot {
     position: absolute;
     pointer-events: none;
 }
 
 .statistics-chart-guide[hidden],
 .statistics-chart-dot[hidden],
-.statistics-chart-tip[hidden] {
+.statistics-chart-previous-dot[hidden] {
     display: none;
 }
 
-.statistics-chart-guide {
-    inset-block: 0;
-    inline-size: 1px;
-    translate: -50% 0;
-    background: var(--statistics-baseline-color);
+/* From the axis top to its bottom, inside the drawing's margins. */
+.statistics-chart-plot .statistics-chart-guide {
+    top: calc(100% * 12 / 240);
+    bottom: calc(100% * 14 / 240);
+    inline-size: 0;
+    border-left: 1px solid var(--statistics-guide-color);
+}
+
+.statistics-chart-plot .statistics-chart-dot,
+.statistics-chart-plot .statistics-chart-previous-dot {
+    border-radius: 50%;
+    translate: -50% -50%;
+    box-shadow: 0 0 0 3px var(--statistics-background);
 }
 
 .statistics-chart-dot {
-    inline-size: 0.75rem;
-    block-size: 0.75rem;
-    translate: -50% -50%;
-    border: 2px solid var(--statistics-tip-background);
-    border-radius: 50%;
+    inline-size: 10px;
+    block-size: 10px;
     background: currentColor;
 }
 
-.statistics-chart-tip {
-    z-index: 1;
-    padding-block: 0.375rem;
-    padding-inline: 0.625rem;
-    border: var(--statistics-tip-border);
-    border-radius: var(--statistics-radius);
-    background: var(--statistics-tip-background);
-    box-shadow: var(--statistics-tip-shadow);
-    color: var(--statistics-text-color);
-    white-space: nowrap;
-}
-
-.statistics-chart-tip p {
-    margin: 0;
-}
-
-.statistics-chart-tip [data-statistics-tip-value] {
-    font-weight: 600;
+.statistics-chart-previous-dot {
+    inline-size: 8px;
+    block-size: 8px;
+    background: var(--statistics-previous-color);
 }
 
 .statistics-chart-days {
     grid-column: 2;
     position: relative;
-    block-size: 1.5rem;
+    block-size: 1.75rem;
     margin: 0;
     padding: 0;
-    color: var(--statistics-text-color);
+    color: var(--statistics-muted-color);
+    font-size: var(--statistics-font-size);
     list-style: none;
     container-type: inline-size;
 }
@@ -236,7 +352,7 @@
 .statistics-chart-day {
     position: absolute;
     translate: -50% 0;
-    padding-block-start: 0.25rem;
+    padding-block-start: 0.5rem;
     white-space: nowrap;
     unicode-bidi: plaintext;
 }
@@ -249,13 +365,10 @@
     translate: -100% 0;
 }
 
-.statistics-chart-day[data-minor] {
-    color: var(--statistics-minor-text-color);
-}
-
-/* Every other day label, so a narrow axis has room for the rest. */
+/* Every other day label and its line, so a narrow axis has room for the rest. */
 @container (width < 35rem) {
-    .statistics-chart-day[data-minor] {
+    .statistics-chart-day[data-minor],
+    .statistics-chart-grid [data-minor] {
         display: none;
     }
 }
