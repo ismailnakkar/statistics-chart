@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {statisticsChart} from '../src/index.js';
+import {statisticsChart, statisticsCharts} from '../src/index.js';
 
 // What the components render, so the suite reads the markup contract as it stands.
 const markup = readFileSync(resolve(import.meta.dirname, 'fixtures/line-chart.html'), 'utf8');
@@ -267,5 +267,63 @@ describe('the statistics chart tooltip', () => {
         expect(rebound).not.toBe(instance);
         pointer('pointermove', 240);
         expect(shown()).toBe(true);
+    });
+});
+
+describe('statisticsCharts()', () => {
+    /** Two charts on the page, one in each of #first and #second, not yet bound. */
+    function renderTwo() {
+        document.body.innerHTML = `<section id="first">${markup}</section><section id="second">${markup}</section>`;
+    }
+
+    const plots = () => [...document.querySelectorAll('[data-statistics-plot]')];
+
+    const sliders = () => plots().map((element) => element.getAttribute('role') === 'slider');
+
+    beforeEach(() => {
+        renderTwo();
+    });
+
+    it('binds every plot on the page and returns their handles in document order', () => {
+        const charts = statisticsCharts();
+
+        expect(charts).toHaveLength(2);
+        expect(sliders()).toEqual([true, true]);
+        plots().forEach((element, at) => expect(statisticsChart(element)).toBe(charts[at]));
+    });
+
+    it('returns the same handles on a second call, binding nothing again', () => {
+        const first = statisticsCharts();
+        const adds = plots().map((element) => vi.spyOn(element, 'addEventListener'));
+        const second = statisticsCharts();
+
+        expect(second).toHaveLength(2);
+        second.forEach((chart, at) => expect(chart).toBe(first[at]));
+        adds.forEach((add) => expect(add).not.toHaveBeenCalled());
+    });
+
+    it('binds only the plots under the root it is given', () => {
+        const charts = statisticsCharts(document.getElementById('second'));
+
+        expect(charts).toHaveLength(1);
+        expect(sliders()).toEqual([false, true]);
+        expect(statisticsChart(plots()[1])).toBe(charts[0]);
+    });
+
+    it('returns handles whose destroy() unbinds each plot, so a later call binds them again', () => {
+        const attributes = () => plots().map((element) => element.getAttributeNames().sort());
+        const before = attributes();
+        const charts = statisticsCharts();
+
+        charts.forEach((chart) => chart.destroy());
+
+        expect(attributes()).toEqual(before);
+        pointer('pointermove', 240, 'mouse', plots()[1]);
+        expect(document.querySelector('#second [data-statistics-tip]').hidden).toBe(true);
+
+        const rebound = statisticsCharts();
+
+        expect(sliders()).toEqual([true, true]);
+        rebound.forEach((chart, at) => expect(chart).not.toBe(charts[at]));
     });
 });

@@ -7,7 +7,7 @@ legend and radios) and colours them, so every page that draws a chart needs it. 
 keyboard tooltip and makes each plot a slider over its days; without it, each point keeps a `<title>` for the
 browser's tooltip.
 
-Works with laravel-statistics ^0.3.
+Works with laravel-statistics ^0.3 and ^0.4.
 
 ## Install
 
@@ -20,43 +20,42 @@ No dependencies. Type declarations are included.
 ## Usage
 
 Import the stylesheet statically, in your CSS or JS entry, on every page: the bar charts need it too, and a chart
-styled after its first paint shifts. Bind the script to each plot:
+styled after its first paint shifts. Bind the script to the plots:
 
 ```js
 import '@ismailnakkar/statistics-chart/style.css';
-import {statisticsChart} from '@ismailnakkar/statistics-chart';
+import {statisticsCharts} from '@ismailnakkar/statistics-chart';
 
-document.querySelectorAll('[data-statistics-plot]').forEach((plot) => statisticsChart(plot));
+statisticsCharts();
 ```
 
 In CSS, `@import '@ismailnakkar/statistics-chart/style.css';` does the same.
 
-`statisticsChart(plot)` takes one `[data-statistics-plot]` element and returns `{destroy}`. It reads the plot's data
-once, when it binds it. A second call on a bound plot returns its first handle. A plot with no points is left alone,
-and a later call binds it once it has some. `destroy()` removes the listeners and every attribute the script added, and
-hides the tooltip.
+`statisticsCharts(root = document)` binds every `[data-statistics-plot]` under `root` (a document, fragment or element)
+and returns their handles, one per plot in document order. `statisticsChart(plot)` binds one plot the same way and
+returns its handle, `{destroy}`. Either reads a plot's data once, when it binds it. A second call on a bound plot
+returns its first handle. A plot with no points is left alone, and a later call binds it once it has some. `destroy()`
+removes the listeners and every attribute the script added, and hides the tooltip.
 
 ## Lifecycle
 
 On a page that swaps markup in place (Livewire, Turbo, htmx), destroy each plot's handle before the swap and bind the
 plots again after it. A plot still bound keeps its first handle and its first data, and a morph strips the attributes
 the script added, so a plot the swap changes needs both. As a call on a bound plot returns its handle,
-`statisticsChart(plot).destroy()` unbinds it:
+destroying what `statisticsCharts(region)` returns unbinds the region's plots:
 
 ```js
-const plots = (region) => region.querySelectorAll('[data-statistics-plot]');
-
 // Before the swap.
-plots(region).forEach((plot) => statisticsChart(plot).destroy());
+statisticsCharts(region).forEach((chart) => chart.destroy());
 
 // After it.
-plots(region).forEach((plot) => statisticsChart(plot));
+statisticsCharts(region);
 ```
 
-With Turbo Drive, destroy on `turbo:before-cache` and bind on `turbo:load`, over the whole `document`. Give each chart
-that a partial response renders (a Livewire update, a Turbo Frame, htmx) an `id` on its component: the `id` starts every
-id and radio name inside the chart, which otherwise numbers from `statistics-chart-1` again and collides with a chart
-already on the page.
+With Turbo Drive, destroy on `turbo:before-cache` and bind on `turbo:load`, over the whole `document` (no argument).
+Give each chart that a partial response renders (a Livewire update, a Turbo Frame, htmx) an `id` on its component: the
+`id` starts every id and radio name inside the chart, which otherwise numbers from `statistics-chart-1` again and
+collides with a chart already on the page.
 
 ## The markup
 
@@ -171,4 +170,7 @@ Run this package's suite with `npm test`.
 
 ## Upgrading
 
-Nothing yet: 0.1.0 is the first release.
+### From 0.1
+
+Nothing breaks. `statisticsCharts(root = document)` is new: it binds every plot under `root`, so it replaces a
+`querySelectorAll('[data-statistics-plot]')` loop over `statisticsChart()`, which stays.

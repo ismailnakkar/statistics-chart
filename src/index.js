@@ -15,7 +15,13 @@ const KEYS = {
     End: (_day, last) => last,
 };
 
+const PLOT = '[data-statistics-plot]';
+
 const bound = new WeakMap();
+
+export function statisticsCharts(root = document) {
+    return Array.from(root.querySelectorAll(PLOT), (plot) => statisticsChart(plot));
+}
 
 export function statisticsChart(plot) {
     const existing = bound.get(plot);
