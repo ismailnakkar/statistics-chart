@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
 import {resolve} from 'node:path';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {statisticsChart, statisticsCharts} from '../src/index.js';
+import {statisticsCharts} from '../src/index.js';
 
 // What the component renders (three panels: paid views, publisher earnings, CPM), so the suite reads the markup
 // contract as it stands.
@@ -76,10 +76,17 @@ function render(data = {}) {
     plots().forEach(measure);
 }
 
+/** Binds the one plot through the only entry point, on the element around it, and returns its handle. */
+function bind(element) {
+    const [handle] = statisticsCharts(element.parentElement);
+
+    return handle;
+}
+
 function mount(data = {}) {
     render(data);
 
-    return statisticsChart(plot());
+    return bind(plot());
 }
 
 beforeEach(() => {
@@ -152,7 +159,7 @@ describe('the statistics chart', () => {
     it('marks a fall on the previous month\'s day down, in each panel\'s own context line', () => {
         const earnings = plots()[1];
 
-        statisticsChart(earnings);
+        bind(earnings);
         pointer('pointermove', 100, 'mouse', earnings);
 
         expect(context(earnings)).toEqual(['0.0070', 'Sun 1 Nov: 0.0040', '-33%', 'down', '1 Oct: 0.0060', null]);
@@ -404,7 +411,7 @@ describe('the statistics chart', () => {
 
         document.body.replaceChildren(lone);
         measure(lone);
-        statisticsChart(lone);
+        bind(lone);
 
         pointer('pointermove', 250, 'mouse', lone);
         expect(lone.querySelector('[data-statistics-guide]').hidden).toBe(false);
@@ -423,7 +430,7 @@ describe('the statistics chart', () => {
         empty.destroy();
         plot().setAttribute('data-statistics-points', '[[0,33.333],[50,66.667],[100,83.333]]');
 
-        expect(statisticsChart(plot())).not.toBe(empty);
+        expect(bind(plot())).not.toBe(empty);
         expect(plot().getAttribute('role')).toBe('slider');
         pointer('pointermove', 240);
         expect(shown()).toBe(true);
@@ -436,7 +443,7 @@ describe('the statistics chart', () => {
                 plot().removeAttribute('data-statistics-name');
             }
 
-            statisticsChart(plot());
+            bind(plot());
 
             expect(plot().hasAttribute('role')).toBe(false);
             expect(plot().hasAttribute('tabindex')).toBe(false);
@@ -444,10 +451,10 @@ describe('the statistics chart', () => {
     });
 
     it('binds once however often it is called', () => {
-        const first = statisticsChart(plot());
+        const first = bind(plot());
         const add = vi.spyOn(plot(), 'addEventListener');
 
-        expect(statisticsChart(plot())).toBe(first);
+        expect(bind(plot())).toBe(first);
         expect(add).not.toHaveBeenCalled();
     });
 
@@ -459,7 +466,7 @@ describe('the statistics chart', () => {
         const attributes = () => [plot(), plot().querySelector('svg'), hook('guide'), hook('dot'), hook('previous-dot'), hook('context'), ...hook('context').querySelectorAll('*'), ...tab.querySelectorAll('*')]
             .map((element) => element.getAttributeNames().sort());
         const before = [attributes(), hook('context').innerHTML, tab.innerHTML];
-        const instance = statisticsChart(plot());
+        const instance = bind(plot());
 
         Object.defineProperty(hook('context'), 'offsetHeight', {value: 85, configurable: true});
         plot().focus();
@@ -485,7 +492,7 @@ describe('the statistics chart', () => {
         expect(hook('guide').hidden).toBe(false);
 
         hook('guide').hidden = true;
-        const rebound = statisticsChart(plot());
+        const rebound = bind(plot());
 
         expect(rebound).not.toBe(instance);
         pointer('pointermove', 240);
@@ -494,6 +501,10 @@ describe('the statistics chart', () => {
 });
 
 describe('statisticsCharts()', () => {
+    it('is the only export', async () => {
+        expect(Object.keys(await import('../src/index.js'))).toEqual(['statisticsCharts']);
+    });
+
     /** Two charts of three plots on the page, one in each of #first and #second, not yet bound. */
     function renderTwo() {
         document.body.innerHTML = `<section id="first">${markup}</section><section id="second">${markup}</section>`;
@@ -511,7 +522,7 @@ describe('statisticsCharts()', () => {
 
         expect(charts).toHaveLength(6);
         expect(sliders()).toEqual(Array(6).fill(true));
-        plots().forEach((element, at) => expect(statisticsChart(element)).toBe(charts[at]));
+        plots().forEach((element, at) => expect(bind(element)).toBe(charts[at]));
     });
 
     it('returns the same handles on a second call, binding nothing again', () => {
@@ -529,7 +540,7 @@ describe('statisticsCharts()', () => {
 
         expect(charts).toHaveLength(3);
         expect(sliders()).toEqual([false, false, false, true, true, true]);
-        expect(statisticsChart(plots()[3])).toBe(charts[0]);
+        expect(bind(plots()[3])).toBe(charts[0]);
     });
 
     it('returns handles whose destroy() unbinds each plot, so a later call binds them again', () => {

@@ -4,13 +4,8 @@ export interface StatisticsChart {
 }
 
 /**
- * Makes one `[data-statistics-plot]` element a slider over its days, whose guide and context line follow the day shown. A second call on a bound plot
- * returns its first handle; a plot with no points is left alone, and a later call binds it once it has some.
- */
-export function statisticsChart(plot: Element): StatisticsChart;
-
-/**
- * Binds every `[data-statistics-plot]` under `root` with `statisticsChart()` and returns their handles, one per plot in
- * document order. A second call returns the same handles for the plots already bound.
+ * Makes every `[data-statistics-plot]` under `root` a slider over its days, its guide and context line following the
+ * day shown, and returns their handles, one per plot in document order. A second call returns the first handle of a
+ * plot already bound; a plot missing its data, guide or dot is left alone until a later call.
  */
 export function statisticsCharts(root?: ParentNode): StatisticsChart[];

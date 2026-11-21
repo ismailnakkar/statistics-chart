@@ -11,15 +11,15 @@ const KEYS = {
 const PLOT = '[data-statistics-plot]';
 
 /** The context line's parts the script switches to the day shown, each optional. */
-const CONTEXT = {
+const CONTEXT_PARTS = {
     caption: '[data-statistics-caption]',
     chip: '[data-statistics-chip]',
     previousDay: '[data-statistics-previous-day]',
     average: '[data-statistics-average]',
 };
 
-/** The context line's parts the slider's value text reads, in order, while they show. */
-const READ = ['caption', 'chip', 'previousDay'];
+/** The parts the slider's value text reads, in order, while they show. */
+const VALUE_TEXT_PARTS = ['caption', 'chip', 'previousDay'];
 
 const TREND = 'data-trend';
 
@@ -31,44 +31,44 @@ export function statisticsCharts(root = document) {
     return Array.from(root.querySelectorAll(PLOT), (plot) => statisticsChart(plot));
 }
 
-export function statisticsChart(plot) {
+/** Binds one plot, once: a second call returns its first handle. */
+function statisticsChart(plot) {
     const existing = bound.get(plot);
 
     if (existing) {
         return existing;
     }
 
-    const state = resolve(plot);
+    const state = readPlot(plot);
 
-    // Not kept, so a later call binds the plot once it has points.
+    // Not kept, so a later call binds the plot once it has its data.
     if (state === null) {
         return {destroy() {}};
     }
 
-    const instance = listen(state);
+    const handle = bind(state);
 
-    bound.set(plot, instance);
+    bound.set(plot, handle);
 
-    return instance;
+    return handle;
 }
 
-function resolve(root) {
-    const read = (name) => JSON.parse(root.dataset[name] ?? '[]');
+function readPlot(plot) {
+    const read = (name) => JSON.parse(plot.dataset[name] ?? '[]');
     const points = read('statisticsPoints');
     const labels = read('statisticsLabels');
-    const guide = root.querySelector('[data-statistics-guide]');
-    const dot = root.querySelector('[data-statistics-dot]');
+    const guide = plot.querySelector('[data-statistics-guide]');
+    const dot = plot.querySelector('[data-statistics-dot]');
 
-    if (points.length === 0 || labels.length !== points.length || !root.dataset.statisticsName || !guide || !dot) {
+    if (points.length === 0 || labels.length !== points.length || !plot.dataset.statisticsName || !guide || !dot) {
         return null;
     }
 
-    const panel = root.closest('.statistics-chart-panel');
-    const context = panel?.querySelector('[data-statistics-context]');
+    const context = plot.closest('.statistics-chart-panel')?.querySelector('[data-statistics-context]');
     const last = points.length - 1;
 
     return {
-        root,
+        plot,
         points,
         labels,
         days: read('statisticsDays'),
@@ -77,72 +77,75 @@ function resolve(root) {
         previousLabels: read('statisticsPreviousLabels'),
         guide,
         dot,
-        previousDot: root.querySelector('[data-statistics-previous-dot]'),
-        context: context ? {...parts(context), element: context, live: context.getAttribute(LIVE)} : null,
-        svg: root.querySelector('svg.statistics-chart-svg'),
+        previousDot: plot.querySelector('[data-statistics-previous-dot]'),
+        context: context ? readContext(context) : null,
+        svg: plot.querySelector('svg.statistics-chart-svg'),
         last,
         day: last,
     };
 }
 
 /** The context line's parts, and what each holds for the month, to restore when the guide hides. */
-function parts(context) {
-    const found = Object.fromEntries(Object.entries(CONTEXT).map(([name, selector]) => [name, context.querySelector(selector)]));
-    const month = Object.values(found).filter(Boolean).map((element) => ({
-        element,
-        // Its text and its highlights, as the page rendered them.
-        nodes: Array.from(element.childNodes),
-        hidden: element.hidden,
-        trend: element.getAttribute(TREND),
+function readContext(element) {
+    const found = Object.fromEntries(
+        Object.entries(CONTEXT_PARTS).map(([name, selector]) => [name, element.querySelector(selector)]),
+    );
+    const month = Object.values(found).filter(Boolean).map((part) => ({
+        element: part,
+        // Nodes, not text, so the month's highlights come back.
+        nodes: Array.from(part.childNodes),
+        hidden: part.hidden,
+        trend: part.getAttribute(TREND),
     }));
 
-    return {...found, month};
+    return {...found, element, month, live: element.getAttribute(LIVE)};
 }
 
-function listen(state) {
-    const {root} = state;
+function bind(state) {
+    const {plot} = state;
     const abort = new AbortController();
     const options = {signal: abort.signal};
     const slider = {
         role: 'slider',
         tabindex: '0',
-        'aria-label': root.dataset.statisticsName,
+        'aria-label': plot.dataset.statisticsName,
         'aria-valuemin': '1',
         'aria-valuemax': String(state.points.length),
     };
+    const follow = ({clientX}) => show(state, dayAt(state, clientX));
 
-    assign(root, slider);
-    // A slider's children are its own: the drawing would repeat the summary the slider reads as its description.
+    assign(plot, slider);
+    // The slider reads the summary as its description: the drawing would repeat it.
     state.svg?.setAttribute('aria-hidden', 'true');
     select(state, state.day);
 
-    root.addEventListener('pointermove', ({clientX}) => show(state, dayAt(state, clientX)), options);
-    root.addEventListener('pointerdown', ({clientX}) => show(state, dayAt(state, clientX)), options);
+    plot.addEventListener('pointermove', follow, options);
+    plot.addEventListener('pointerdown', follow, options);
 
     // Only a mouse leave hides it: a finger always "leaves" as it lifts.
-    root.addEventListener('pointerleave', ({pointerType}) => {
+    plot.addEventListener('pointerleave', ({pointerType}) => {
         if (pointerType === 'mouse') {
             hide(state);
         }
     }, options);
     document.addEventListener('pointerdown', ({target}) => {
-        if (!state.guide.hidden && !(target instanceof Node && root.contains(target))) {
-            root.blur();
+        if (!state.guide.hidden && !(target instanceof Node && plot.contains(target))) {
+            plot.blur();
             hide(state);
         }
     }, options);
 
     // While focused, the slider's value text reads the context line, so the live region would say each day twice.
-    root.addEventListener('focus', () => {
+    plot.addEventListener('focus', () => {
         state.context?.element.setAttribute(LIVE, 'off');
         show(state, state.day);
     }, options);
-    root.addEventListener('blur', () => {
+    plot.addEventListener('blur', () => {
         hide(state);
         restoreLive(state);
     }, options);
 
-    root.addEventListener('keydown', (event) => {
+    plot.addEventListener('keydown', (event) => {
         if (event.altKey || event.ctrlKey || event.metaKey) {
             return;
         }
@@ -168,37 +171,33 @@ function listen(state) {
             restoreLive(state);
 
             for (const name of [...Object.keys(slider), ...Object.keys(value(state))]) {
-                root.removeAttribute(name);
+                plot.removeAttribute(name);
             }
 
-            for (const overlay of [state.guide, state.dot, state.previousDot]) {
-                overlay?.removeAttribute('style');
+            for (const overlay of overlays(state)) {
+                overlay.removeAttribute('style');
             }
 
             state.svg?.removeAttribute('aria-hidden');
 
-            bound.delete(root);
+            bound.delete(plot);
         },
     };
 }
 
 /** The slider's value: the day shown, or the one focus shows, read as the context line reads it then. */
 function value({day, labels, context, guide}) {
-    const parts = context && !guide.hidden ? READ.map((name) => context[name]).filter((part) => part && !part.hidden) : [];
+    const parts = context && !guide.hidden
+        ? VALUE_TEXT_PARTS.map((name) => context[name]).filter((part) => part && !part.hidden)
+        : [];
     const text = parts.length > 0 ? parts.map((part) => part.textContent.trim()).join(', ') : labels[day];
 
     return {'aria-valuenow': String(day + 1), 'aria-valuetext': text};
 }
 
-function restoreLive({context}) {
-    if (context) {
-        context.live === null ? context.element.removeAttribute(LIVE) : context.element.setAttribute(LIVE, context.live);
-    }
-}
-
 function select(state, day) {
     state.day = day;
-    assign(state.root, value(state));
+    assign(state.plot, value(state));
 }
 
 function assign(element, attributes) {
@@ -207,8 +206,28 @@ function assign(element, attributes) {
     }
 }
 
+/** Sets the attribute, or removes it where the page had none. */
+function restoreAttribute(element, name, text) {
+    if (text === null) {
+        element.removeAttribute(name);
+    } else {
+        element.setAttribute(name, text);
+    }
+}
+
+function restoreLive({context}) {
+    if (context) {
+        restoreAttribute(context.element, LIVE, context.live);
+    }
+}
+
+/** The guide and the dots the plot has. */
+function overlays({guide, dot, previousDot}) {
+    return [guide, dot, previousDot].filter(Boolean);
+}
+
 function show(state, index) {
-    const {guide, dot, previousDot, context} = state;
+    const {guide, context} = state;
     const day = Math.max(0, Math.min(state.last, index));
 
     // Every pointermove lands here: rewriting the same day would make the live region speak again.
@@ -216,76 +235,70 @@ function show(state, index) {
         return;
     }
 
-    const [x, y] = state.points[day];
-    const before = state.previous[day];
-
     // Held at the month's height while a day shows, so a shorter day line never moves the plot.
     if (context && guide.hidden) {
         context.element.style.minBlockSize = `${context.element.offsetHeight}px`;
     }
 
-    guide.style.left = `${x}%`;
+    guide.style.left = `${state.points[day][0]}%`;
     guide.hidden = false;
-    // A day without a value is a gap in the line: no dot on it.
-    mark(dot, x, y);
-    mark(previousDot, ...(before ?? [x, null]));
+    moveDot(state.dot, state.points[day]);
+    moveDot(state.previousDot, state.previous[day]);
 
     if (context) {
-        scrub(state, day);
+        writeContext(state, day);
     }
 
     select(state, day);
 }
 
 function hide(state) {
+    const {guide, context} = state;
+
     // The context line already reads the month whenever nothing shows.
-    if (state.guide.hidden) {
+    if (guide.hidden) {
         return;
     }
 
-    for (const overlay of [state.guide, state.dot, state.previousDot]) {
-        if (overlay) {
-            overlay.hidden = true;
-        }
+    for (const overlay of overlays(state)) {
+        overlay.hidden = true;
     }
 
-    for (const {element, nodes, hidden, trend} of state.context?.month ?? []) {
+    if (!context) {
+        return;
+    }
+
+    for (const {element, nodes, hidden, trend} of context.month) {
         element.replaceChildren(...nodes);
         element.hidden = hidden;
-        trend === null ? element.removeAttribute(TREND) : element.setAttribute(TREND, trend);
+        restoreAttribute(element, TREND, trend);
     }
 
-    if (state.context) {
-        const {element} = state.context;
+    context.element.style.removeProperty('min-block-size');
 
-        element.style.removeProperty('min-block-size');
-
-        if (element.getAttribute('style') === '') {
-            element.removeAttribute('style');
-        }
+    if (context.element.getAttribute('style') === '') {
+        context.element.removeAttribute('style');
     }
 }
 
-/** Shows the dot at the point, or hides it where the day has no value. */
-function mark(element, x, y) {
-    if (!element) {
+/** Puts the dot on the point, or hides it on a day without a value, a gap in the line. */
+function moveDot(dot, point) {
+    if (!dot) {
         return;
     }
 
-    element.hidden = y === null;
+    const [x, y] = point ?? [null, null];
+
+    dot.hidden = y === null;
 
     if (y !== null) {
-        place(element, x, y);
+        dot.style.left = `${x}%`;
+        dot.style.top = `${y}%`;
     }
-}
-
-function place(element, x, y) {
-    element.style.left = `${x}%`;
-    element.style.top = `${y}%`;
 }
 
 /** The day as it reads: its name and value, its change on the previous month's day, and that day's figure. */
-function scrub(state, day) {
+function writeContext(state, day) {
     const {caption, chip, previousDay, average} = state.context;
     const change = state.changes[day] ?? null;
 
@@ -300,7 +313,7 @@ function scrub(state, day) {
 }
 
 /**
- * Shows the words in the element, or hides the element without any: a string, or the parts of a line, plain and
+ * Writes the words into the element as text, or hides it without any. Words are a string, or a line's parts, plain and
  * highlighted in turn from a plain one, each highlighted part in a <strong>.
  */
 function write(element, words) {
@@ -308,7 +321,9 @@ function write(element, words) {
         return;
     }
 
-    element.replaceChildren(...[words ?? []].flat().map((part, at) => (at % 2 === 1 ? highlight(element, part) : part)));
+    const parts = [words ?? []].flat();
+
+    element.replaceChildren(...parts.map((part, at) => (at % 2 === 1 ? highlight(element, part) : part)));
     element.hidden = words === null || words === undefined;
 }
 
@@ -336,7 +351,7 @@ function signed(change) {
 
 /** The day whose point is nearest the pointer; the slider's own day when the plot has no width. */
 function dayAt(state, clientX) {
-    const {left, width} = state.root.getBoundingClientRect();
+    const {left, width} = state.plot.getBoundingClientRect();
 
     if (width <= 0) {
         return state.day;

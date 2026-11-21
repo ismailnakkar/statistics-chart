@@ -109,7 +109,7 @@ describe('style.css', () => {
         // Read with a fallback, so left unset: a default at :root would fix the fallback's value there.
         const unset = new Set(Array.from(css.matchAll(/var\((--statistics-[a-z0-9-]+), var\(--statistics-[a-z0-9-]+\)\)/g), ([, name]) => name));
 
-        expect(used.size).toBe(22);
+        expect(used.size).toBe(20);
         expect([...unset]).toEqual([]);
         expect(Object.keys(defaults).sort()).toEqual([...used].filter((name) => !unset.has(name)).sort());
 
@@ -238,7 +238,7 @@ describe('style.css', () => {
     });
 
     it('keeps a context line part the script hides hidden, whatever the page sets', () => {
-        expect(rule('.statistics-chart-context [hidden]').declarations.display).toBe('none');
+        expect(ruleFor('.statistics-chart-context [hidden]').declarations.display).toBe('none');
     });
 
     it('lays the tabs out in one row of equal columns, two on a narrower chart and one on a narrow one', () => {
@@ -295,8 +295,9 @@ describe('style.css', () => {
         expect(rulesWith('baseline')).toEqual([]);
     });
 
-    it('lets the app set the bars\' corners', () => {
-        expect(ruleFor('.statistics-bars-fill').declarations.rx).toBe('var(--statistics-bar-radius)');
+    it('styles no bar chart', () => {
+        expect(rulesWith('statistics-bars')).toEqual([]);
+        expect(Object.keys(rule(':where(:root)').declarations).filter((name) => name.startsWith('--statistics-bar'))).toEqual([]);
     });
 
     it('keeps hidden overlays hidden', () => {
@@ -315,12 +316,6 @@ describe('style.css', () => {
         for (const {selector, declarations} of rings) {
             expect(declarations.outline, selector).toBe('2px solid var(--statistics-focus-color)');
         }
-    });
-
-    it('sizes the bars\' text from the font size and leaves their height to the markup', () => {
-        expect(rule('.statistics-bars').declarations['font-size']).toBe('var(--statistics-font-size)');
-        // A CSS height overrides the svg's height attribute, and the bars have no viewBox to keep a ratio.
-        expect(Object.keys(rule('.statistics-bars-svg').declarations)).not.toContain('block-size');
     });
 
     it('is exported, with the declaration that lets TypeScript import it', () => {

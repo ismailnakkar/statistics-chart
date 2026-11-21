@@ -1,6 +1,6 @@
 /*
- * The light colours only. Lightning CSS (Vite's, Tailwind v4's) lowers light-dark() to variables it sets only where
- * the same stylesheet declares color-scheme, so a pair here breaks in an app's build. A dark page sets its own (README).
+ * Light colours only: Lightning CSS (Vite's, Tailwind v4's) lowers light-dark() to variables it sets only where the
+ * same stylesheet declares color-scheme, so a pair here breaks in an app's build. A dark page sets its own (README).
  */
 :where(:root) {
     --statistics-line-color: #3d5afe;
@@ -23,8 +23,6 @@
     --statistics-flat-background: #eceef3;
     --statistics-radius: 0.375rem;
     --statistics-focus-color: #3d5afe;
-    --statistics-bar-color: #2563eb;
-    --statistics-bar-radius: 3px;
 }
 
 .statistics-chart-hidden {
@@ -43,7 +41,7 @@
     color: var(--statistics-text-color);
 }
 
-/* The metric tabs: one row of equal columns, the chosen one topped in its measure's colour. */
+/* The metric tabs: one row of equal columns. */
 .statistics-chart-tabs {
     display: grid;
     grid-auto-columns: minmax(0, 1fr);
@@ -109,7 +107,7 @@ div.statistics-chart-tab {
     font-variant-numeric: tabular-nums;
 }
 
-/* Two columns on a narrower chart, each row after the first under a line; one on a narrow one. A lone block stays whole. */
+/* Two to a row on a narrower chart, each row after the first under a line. A lone chart's block stays whole. */
 @container (width < 720px) {
     fieldset.statistics-chart-tabs {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -135,7 +133,7 @@ div.statistics-chart-tab {
     }
 }
 
-/* Below 480px three tabs stack, one to a row. */
+/* Three tabs stack below 480px. */
 @container (width < 480px) {
     fieldset.statistics-chart-tabs:has(> .statistics-chart-tab:nth-of-type(3):last-of-type) {
         grid-template-columns: minmax(0, 1fr);
@@ -183,7 +181,7 @@ div.statistics-chart-tab {
     color: var(--statistics-line-color);
 }
 
-/* The line under the tabs: the month and its daily average, or the day shown. The script holds its height then. */
+/* The line under the tabs. The script holds its height while it shows a day. */
 .statistics-chart-context {
     display: flex;
     flex-wrap: wrap;
@@ -194,7 +192,11 @@ div.statistics-chart-tab {
     font-variant-numeric: tabular-nums;
 }
 
-.statistics-chart-context [hidden] {
+/* What the script hides stays hidden, whatever display the page gives it. */
+.statistics-chart-context [hidden],
+.statistics-chart-guide[hidden],
+.statistics-chart-dot[hidden],
+.statistics-chart-previous-dot[hidden] {
     display: none;
 }
 
@@ -253,7 +255,7 @@ div.statistics-chart-tab {
     font-variant-numeric: tabular-nums;
     list-style: none;
     text-align: end;
-    /* The drawing's inner margin, 12 and 14 of its 240 (LineChart::MARGIN_TOP, MARGIN_BOTTOM): each value on its line. */
+    /* LineChart::MARGIN_TOP and MARGIN_BOTTOM, 12 and 14 of the drawing's 240: each value on its line. */
     padding-block: calc(var(--statistics-plot-height) * 12 / 240) calc(var(--statistics-plot-height) * 14 / 240);
     padding-inline: 0;
 }
@@ -302,12 +304,6 @@ div.statistics-chart-tab {
 .statistics-chart-plot .statistics-chart-previous-dot {
     position: absolute;
     pointer-events: none;
-}
-
-.statistics-chart-guide[hidden],
-.statistics-chart-dot[hidden],
-.statistics-chart-previous-dot[hidden] {
-    display: none;
 }
 
 /* From the axis top to its bottom, inside the drawing's margins. */
@@ -371,18 +367,4 @@ div.statistics-chart-tab {
     .statistics-chart-grid [data-minor] {
         display: none;
     }
-}
-
-.statistics-bars {
-    color: var(--statistics-text-color);
-    font-size: var(--statistics-font-size);
-}
-
-.statistics-bars-svg {
-    display: block;
-}
-
-.statistics-bars-fill {
-    fill: var(--statistics-bar-color);
-    rx: var(--statistics-bar-radius);
 }
